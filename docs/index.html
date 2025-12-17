@@ -2,12 +2,12 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>SMAPI‑KI – Web Test v0.3</title>
+  <title>SMAPI‑KI – Web Test v0.4</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="tools/style.css">
 </head>
 <body>
-  <header>SMAPI‑KI – Offline Web Test (v0.3)</header>
+  <header>SMAPI‑KI – Offline Web Test (v0.4)</header>
 
   <main>
     <p>Beschreibe, was du für deine SMAPI‑Mod willst:</p>
@@ -21,13 +21,20 @@
     <pre id="output"></pre>
   </main>
 
-  <!-- KI-Core getrennt im Ai/ Ordner -->
-  <script src="https://github.com/Smapifan/Smapi-Tool/blob/main/docs/Ai/smapi_ki.py"></script>
+  <!-- Hinweis: Python-KI liegt auf GitHub -->
+  <div class="hint">Python-KI befindet sich hier: <a href="https://github.com/Smapifan/Smapi-Tool/blob/main/docs/Ai/smapi_ki.py" target="_blank">smapi_ki.py</a></div>
+
   <script>
-    function runAI() {
+    async function runAI() {
       const input = document.getElementById('input').value;
-      const result = SMAPI_KI.process(input);
-      document.getElementById('output').textContent = result;
+
+      // Da die Python-KI nicht direkt im Browser läuft, zeigen wir den Hinweis an
+      const output = `Hinweis: Diese Version zeigt nur die Web-Testlogik.
+Die vollständige Python-KI liegt hier: https://github.com/Smapifan/Smapi-Tool/blob/main/docs/Ai/smapi_ki.py
+
+Deine Eingabe war: \"${input}\"`;
+
+      document.getElementById('output').textContent = output;
     }
   </script>
 </body>
