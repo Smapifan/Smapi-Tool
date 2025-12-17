@@ -1,41 +1,64 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <title>SMAPI‑KI – Web Test v0.4</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <title>SMAPI-KI Browser Test v0.5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="tools/style.css">
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+  <style>
+    body { font-family: system-ui, Arial; background:#0f1115; color:#eaeaea; margin:0; padding:0; }
+    header { background:#1b1f2a; padding:16px; font-size:20px; font-weight:bold; color:#ff4d4d; }
+    main { padding:16px; max-width:900px; margin:auto; }
+    textarea { width:100%; min-height:120px; background:#151923; color:#eaeaea; border:1px solid #333; border-radius:6px; padding:10px; resize:vertical; }
+    button { margin-top:10px; padding:10px 16px; font-size:16px; background:#ff4d4d; color:#000; border:none; border-radius:6px; cursor:pointer; }
+    button:hover { background:#ff6666; }
+    pre { margin-top:20px; background:#0b0d12; padding:12px; border-radius:6px; overflow-x:auto; white-space:pre-wrap; }
+    .hint { font-size:13px; opacity:0.8; margin-top:8px; }
+  </style>
 </head>
 <body>
-  <header>SMAPI‑KI – Offline Web Test (v0.4)</header>
-
+  <header>SMAPI-KI Browser Test v0.5</header>
   <main>
-    <p>Beschreibe, was du für deine SMAPI‑Mod willst:</p>
-
-    <textarea id="input" placeholder="z.B. Erstelle eine SMAPI Mod, die einen NPC erstellt"></textarea>
-
-    <button onclick="runAI()">KI ausführen</button>
-
-    <div class="hint">Alles läuft lokal im Browser. Kein Server. Kein Upload.</div>
-
+    <textarea id="input" placeholder="z.B. Erstelle eine SMAPI Mod mit NPC"></textarea>
+    <button onclick="runPythonAI()">KI ausführen</button>
+    <div class="hint">Python-KI läuft lokal via Pyodide</div>
     <pre id="output"></pre>
   </main>
 
-  <!-- Hinweis: Python-KI liegt auf GitHub -->
-  <div class="hint">Python-KI befindet sich hier: <a href="https://github.com/Smapifan/Smapi-Tool/blob/main/docs/Ai/smapi_ki.py" target="_blank">smapi_ki.py</a></div>
+  <script type="text/javascript">
+    let pyodideReady = false;
+    let pyodide;
 
-  <script>
-    async function runAI() {
-      const input = document.getElementById('input').value;
-
-      // Da die Python-KI nicht direkt im Browser läuft, zeigen wir den Hinweis an
-      const output = `Hinweis: Diese Version zeigt nur die Web-Testlogik.
-Die vollständige Python-KI liegt hier: https://github.com/Smapifan/Smapi-Tool/blob/main/docs/Ai/smapi_ki.py
-
-Deine Eingabe war: \"${input}\"`;
-
-      document.getElementById('output').textContent = output;
+    async function loadPyodideAndPackages() {
+      pyodide = await loadPyodide();
+      pyodideReady = true;
+      await pyodide.loadPackage(['micropip']);
+      await pyodide.runPythonAsync(`
+import sys
+sys.path.append('Ai')
+      `);
     }
-  </script>
-</body>
-</html>
+
+    loadPyodideAndPackages();
+
+    async function runPythonAI() {
+      if (!pyodideReady) {
+        alert('KI wird geladen, bitte kurz warten...');
+        return;
+      }
+
+      const userInput = document.getElementById('input').value;
+      const code = `
+from smapi_ki import SMAPI_KI
+output = SMAPI_KI.process('''${userInput}''')
+output
+`;
+      try {
+        let result = await pyodide.runPythonAsync(code);
+        document.getElementById('output').textContent = result;
+      } catch(err) {
+        document.getElementById('output').textContent = 'Fehler: ' + err;
+      }
+    }
+  </sc
