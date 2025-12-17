@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>SMAPI‑KI – Web Test v0.3</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="tools/style.css">
+</head>
+<body>
+  <header>SMAPI‑KI – Offline Web Test (v0.3)</header>
+
+  <main>
+    <p>Beschreibe, was du für deine SMAPI‑Mod willst:</p>
+
+    <textarea id="input" placeholder="z.B. Erstelle eine SMAPI Mod, die einen NPC erstellt"></textarea>
+
+    <button onclick="runAI()">KI ausführen</button>
+
+    <div class="hint">Alles läuft lokal im Browser. Kein Server. Kein Upload.</div>
+
+    <pre id="output"></pre>
+  </main>
+
+  <!-- KI-Core getrennt im Ai/ Ordner -->
+  <script src="Ai/smapi_ki.js"></script>
+  <script>
+    function runAI() {
+      const input = document.getElementById('input').value;
+      const result = SMAPI_KI.process(input);
+      document.getElementById('output').textContent = result;
+    }
+  </script>
+</body>
+</html>
